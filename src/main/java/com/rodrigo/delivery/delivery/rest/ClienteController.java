@@ -28,9 +28,9 @@ public class ClienteController {
         return ResponseEntity.created(uri).body(cliente);
     }
 
-    @PutMapping("/{clienteId}")
-    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long clienteId, @RequestBody ClienteDto clienteDto) {
-        Cliente clienteAtualizado = clienteService.atualizarCliente(clienteId, clienteDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long id, @RequestBody ClienteDto clienteDto) {
+        Cliente clienteAtualizado = clienteService.atualizarCliente(id, clienteDto);
         return ResponseEntity.ok(clienteAtualizado);
     }
 
@@ -43,9 +43,9 @@ public class ClienteController {
     public List<Cliente> buscarTodosClientes() {
         return clienteService.buscarTodos();
     }
-    @DeleteMapping("/{clienteId}")
-    public ResponseEntity<String> deletarCliente(@PathVariable Long clienteId) {
-        clienteService.deletarCliente(clienteId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarCliente(@PathVariable Long id) {
+        clienteService.deletarCliente(id);
         return ResponseEntity.ok("Cliente deletado com sucesso");
     }
 }

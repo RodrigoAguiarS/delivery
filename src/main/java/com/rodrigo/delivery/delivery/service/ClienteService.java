@@ -3,6 +3,7 @@ package com.rodrigo.delivery.delivery.service;
 import com.rodrigo.delivery.delivery.domain.Cliente;
 import com.rodrigo.delivery.delivery.domain.Endereco;
 import com.rodrigo.delivery.delivery.domain.dto.ClienteDto;
+import com.rodrigo.delivery.delivery.domain.dto.EnderecoDto;
 import com.rodrigo.delivery.delivery.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,21 +32,26 @@ public class ClienteService {
 
         String cep = clienteDTO.getEndereco().getCep();
 
-        var enderecoCompleto = buscarEnderecoService.buscarEndereco(cep);
+        EnderecoDto enderecoCompleto = buscarEnderecoService.buscarEndereco(cep);
 
         Endereco endereco = modelMapper.map(enderecoCompleto, Endereco.class);
-
-        Cliente cliente = new Cliente();
-        cliente.setNome(clienteDTO.getNome());
+        Cliente cliente = modelMapper.map(clienteDTO, Cliente.class);
+        endereco.setNumeroCasa(cliente.getEndereco().getNumeroCasa());
         cliente.setEndereco(endereco);
-        cliente.getEndereco().setNumeroCasa(clienteDTO.getEndereco().getNumeroCasa());
-        cliente.setTelefone(clienteDTO.getTelefone());
 
         return clienteRepository.save(cliente);
     }
 
-    public Cliente atualizarCliente(Long clienteId, ClienteDto clienteDto) {
-        Cliente clienteExistente = buscarPorId(clienteId);
+    /**
+     * Atualiza as informações de um cliente existente.
+     *
+     * @param id  O ID do cliente a ser atualizado
+     * @param clienteDto  O DTO contendo os novos dados do cliente
+     * @return O cliente atualizado
+     * @throws ClienteNotFoundException Se o cliente com o ID fornecido não for encontrado
+     */
+    public Cliente atualizarCliente(Long id, ClienteDto clienteDto) {
+        Cliente clienteExistente = buscarPorId(id);
 
         clienteExistente.setNome(clienteDto.getNome());
         clienteExistente.setTelefone(clienteDto.getTelefone());
@@ -58,6 +64,13 @@ public class ClienteService {
         return clienteRepository.save(clienteExistente);
     }
 
+    /**
+     * Busca um cliente pelo ID.
+     *
+     * @param id o ID do cliente a ser buscado
+     * @return o cliente encontrado
+     * @throws NotFoundException se o cliente não for encontrado
+     */
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
@@ -73,11 +86,11 @@ public class ClienteService {
 
     /**
      * Deleta um cliente e seu endereço associado.
-     * @param clienteId ID do cliente a ser deletado.
+     * @param id ID do cliente a ser deletado.
      */
-    public void deletarCliente(Long clienteId) {
+    public void deletarCliente(Long id) {
 
-        Cliente cliente = buscarPorId(clienteId);
+        Cliente cliente = buscarPorId(id);
 
         Endereco endereco = cliente.getEndereco();
 

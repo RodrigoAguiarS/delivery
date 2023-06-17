@@ -3,7 +3,6 @@ package com.rodrigo.delivery.delivery.domain;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
@@ -20,7 +19,4 @@ public class Loja {
     private String telefone;
     private Boolean aberto;
 
-    // Relacionamento com produtos
-    @OneToMany(mappedBy = "loja")
-    private List<Produto> produtos;
 }
