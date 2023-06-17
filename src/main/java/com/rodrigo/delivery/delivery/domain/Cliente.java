@@ -1,25 +1,17 @@
 package com.rodrigo.delivery.delivery.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
-public class Cliente {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cliente")
-    private Long id;
-    private String nome;
-    // Relacionamento com o endereço
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_endereco")
-    private Endereco endereco;
+@EqualsAndHashCode(callSuper = true)
+public class Cliente extends Pessoa {
     private String telefone;
-
-    // Relacionamento com as compras
     @OneToMany(mappedBy = "cliente")
     private List<Venda> compras;
+
 }

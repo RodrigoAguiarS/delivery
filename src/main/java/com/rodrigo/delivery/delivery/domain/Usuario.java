@@ -1,18 +1,15 @@
 package com.rodrigo.delivery.delivery.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
-public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Long id;
-    private String nome;
+@EqualsAndHashCode(callSuper = true)
+public class Usuario extends Pessoa {
     private String email;
     private String senha;
 
