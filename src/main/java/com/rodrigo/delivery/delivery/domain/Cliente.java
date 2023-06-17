@@ -10,6 +10,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Cliente extends Pessoa {
+
+    @Column(name = "telefone", unique = true)
     private String telefone;
     @OneToMany(mappedBy = "cliente")
     private List<Venda> compras;
