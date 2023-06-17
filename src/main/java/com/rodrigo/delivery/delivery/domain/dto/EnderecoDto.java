@@ -12,6 +12,8 @@ public class EnderecoDto {
     @JsonIgnore
     private String rua;
 
+    @NotBlank(message = "O campo 'numeroCasa' é obrigatório.")
+    @NotNull(message = "O campo 'numeroCasa' é obrigatório.")
     private String numeroCasa;
     @JsonIgnore
     private String bairro;
