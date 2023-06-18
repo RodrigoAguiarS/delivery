@@ -3,9 +3,8 @@ package com.rodrigo.delivery.delivery.domain;
 import lombok.Data;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
 
 @Entity
 @Data
@@ -27,9 +26,5 @@ public class Venda {
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
-
-    // Relacionamento com os itens de venda
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemVenda> itensVenda = new ArrayList<>();
 }
 

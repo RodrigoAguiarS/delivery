@@ -12,7 +12,6 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-
     // Relacionamento com o endereço
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco")

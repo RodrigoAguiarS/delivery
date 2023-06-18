@@ -1,8 +1,6 @@
 package com.rodrigo.delivery.delivery.service;
 
 import com.rodrigo.delivery.delivery.domain.Produto;
-import com.rodrigo.delivery.delivery.domain.Endereco;
-import com.rodrigo.delivery.delivery.domain.Produto;
 import com.rodrigo.delivery.delivery.domain.dto.ProdutoDto;
 import com.rodrigo.delivery.delivery.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;

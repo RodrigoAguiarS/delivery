@@ -2,7 +2,6 @@ package com.rodrigo.delivery.delivery.domain.dto;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
