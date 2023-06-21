@@ -17,9 +17,6 @@ public class Perfil implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    public static final String PERFIL_ADMIN = "ADMIN";
-    public static final String PERFIL_USUARIO = "USUARIO";
-    public static final String PERFIL_CLIENTE = "CLIENTE";
     @Override
     public String getAuthority() {
         return nome;

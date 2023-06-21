@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,8 @@ public class ClienteService {
         endereco.setNumeroCasa(cliente.getEndereco().getNumeroCasa());
         cliente.setEndereco(endereco);
         // Buscar o perfil de cliente do banco de dados
-        Perfil perfilCliente = perfilRepository.findByNome("CLIENTE");
+        Optional<Perfil> perfilClienteOptional = perfilRepository.findByNome("CLIENTE");
+        Perfil perfilCliente = perfilClienteOptional.orElse(null);
 
         // Se o perfil de cliente não existir, criar um novo perfil de cliente
         if (perfilCliente == null) {

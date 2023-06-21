@@ -1,9 +1,12 @@
 package com.rodrigo.delivery.rest;
 
+import com.rodrigo.delivery.domain.Perfil;
+import com.rodrigo.delivery.domain.Pessoa;
 import com.rodrigo.delivery.domain.Usuario;
 import com.rodrigo.delivery.domain.dto.LoginDto;
 import com.rodrigo.delivery.domain.dto.TokenDto;
 import com.rodrigo.delivery.domain.dto.UsuarioDto;
+import com.rodrigo.delivery.repository.PerfilRepository;
 import com.rodrigo.delivery.service.AutenticacaoService;
 import com.rodrigo.delivery.service.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +17,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/login")
@@ -48,5 +54,22 @@ public class AutenticacaoController {
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+    @GetMapping("/isAdm")
+    public ResponseEntity<Boolean> verificarUsuarioAdministrador(Authentication authentication) {
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+        boolean isAdministrador = authorities.stream()
+                .anyMatch(authority -> autenticacaoService.isPerfilAdmin(authority.getAuthority()));
+
+        return ResponseEntity.ok(isAdministrador);
+    }
+    @GetMapping("/isAdmin")
+    public ResponseEntity<Map<String, Boolean>> isAdmin(Authentication authentication) {
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+        boolean isAdmin = authorities.stream()
+                .anyMatch(authority -> autenticacaoService.isPerfilAdmin(authority.getAuthority()));
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isAdmin", isAdmin);
+        return ResponseEntity.ok(response);
     }
 }

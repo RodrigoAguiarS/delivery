@@ -2,6 +2,7 @@ package com.rodrigo.delivery.service;
 
 import com.rodrigo.delivery.domain.Endereco;
 import com.rodrigo.delivery.domain.Perfil;
+import com.rodrigo.delivery.domain.Pessoa;
 import com.rodrigo.delivery.domain.Usuario;
 import com.rodrigo.delivery.domain.dto.EnderecoDto;
 import com.rodrigo.delivery.domain.dto.PerfilDto;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,19 +52,22 @@ public class AutenticacaoService implements UserDetailsService {
         String senhaCriptografada = passwordEncoder.encode(usuarioDto.getSenha());
         usuario.setSenha(senhaCriptografada);
 
-        List<PerfilDto> perfisDto = usuarioDto.getPerfis();
+        // Definir perfil padrão para o usuário (por exemplo, "Usuário")
+        Optional<Perfil> perfilPadraoOptional = perfilRepository.findByNome("USUARIO");
+        Perfil perfilPadrao = perfilPadraoOptional.orElseGet(() -> {
+            Perfil novoPerfil = new Perfil();
+            novoPerfil.setNome("USUARIO");
+            return perfilRepository.save(novoPerfil);
+        });
         List<Perfil> perfis = new ArrayList<>();
-        for (PerfilDto perfilDto : perfisDto) {
-            ;          Perfil perfil = modelMapper.map(perfilDto, Perfil.class);
-            perfis.add(perfil);
-        }
+        perfis.add(perfilPadrao);
         usuario.setPerfis(perfis);
 
-        // Salvar os perfis antes de salvar o usuário
-        for (Perfil perfil : perfis) {
-            perfilRepository.save(perfil);
-        }
-
         return usuarioRepository.save(usuario);
+    }
+    public boolean isPerfilAdmin(String authority) {
+        // Verifique se o perfil é de administração usando o perfilRepository
+        Optional<Perfil> perfilOptional = perfilRepository.findByNome(authority);
+        return perfilOptional.isPresent() && perfilOptional.get().getNome().equals("ADMIN");
     }
 }
