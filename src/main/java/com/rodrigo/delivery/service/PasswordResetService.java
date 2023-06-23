@@ -1,6 +1,7 @@
 package com.rodrigo.delivery.service;
 
 import com.rodrigo.delivery.service.impl.EmailService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -15,6 +16,10 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 public class PasswordResetService implements EmailService {
+    @Value("${email.username}")
+    private String emailUsername;
+    @Value("${email.password}")
+    private String emailPassword;
 
     /**
      * Envia um email para o destinatário especificado.
@@ -35,7 +40,7 @@ public class PasswordResetService implements EmailService {
         // Configurar as credenciais de autenticação do remetente
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("rodrigo_aguiars@outlook.com", "Bruna.479");
+                return new PasswordAuthentication(emailUsername, emailPassword);
             }
         };
 

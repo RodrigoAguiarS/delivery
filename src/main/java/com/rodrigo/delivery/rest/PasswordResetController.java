@@ -8,9 +8,7 @@ import com.rodrigo.delivery.repository.PasswordResetTokenRepository;
 import com.rodrigo.delivery.repository.UsuarioRepository;
 import com.rodrigo.delivery.service.PasswordResetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,39 +28,37 @@ public class PasswordResetController {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetService passwordResetService;
 
-    @PostMapping("/reset-password")
+    @PostMapping("/login-alterar")
     public ResponseEntity<String> requestPasswordReset(@RequestBody NewEmailRequest request) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(request.getEmail());
-        if (usuarioOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email não encontrado.");
-        }
-
-        Usuario usuario = usuarioOptional.get();
         String uid = UUID.randomUUID().toString();
 
-        PasswordResetToken token = new PasswordResetToken(usuario.getEmail(), uid, true);
+        PasswordResetToken token = new PasswordResetToken(request.getEmail(), uid, true);
         passwordResetTokenRepository.save(token);
 
-        String resetPasswordUrl = "http://localhost:8080/reset-password/" + uid;
+        String resetPasswordUrl = "http://localhost:4200/login-alterar/" + uid;
         String content = "Olá,\n\nClique no link a seguir para redefinir sua senha: " + resetPasswordUrl;
-        passwordResetService.sendEmail(usuario.getEmail(), "Recuperação de senha", content);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body("{\"message\": \"Email de recuperação de senha enviado.\"}");
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(request.getEmail());
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            CompletableFuture.runAsync(() -> {
+                passwordResetService.sendEmail(usuario.getEmail(), "Recuperação de senha", content);
+            });
+        }
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/reset-password/{uid}")
-    public String showResetPasswordPage(@PathVariable("uid") String uid) {
+    @GetMapping("/login-alterar/{uid}")
+    public ResponseEntity<String> showResetPasswordPage(@PathVariable("uid") String uid) {
         Optional<PasswordResetToken> tokenOptional = passwordResetTokenRepository.findByUidAndAtivo(uid, true);
         if (tokenOptional.isEmpty()) {
-            return "error";
+            return ResponseEntity.notFound().build();
         } else {
-            return "reset-password";
+            return ResponseEntity.ok(uid);
         }
     }
 
-    @PostMapping("/reset-password/{uid}")
+    @PostMapping("/login-alterar/{uid}")
     public ResponseEntity<String> updatePassword(@PathVariable("uid") String uid, @RequestBody NewSenhaRequest request) {
         Optional<PasswordResetToken> tokenOptional = passwordResetTokenRepository.findByUidAndAtivo(uid, true);
         if (tokenOptional.isEmpty()) {
@@ -82,7 +79,7 @@ public class PasswordResetController {
         token.setAtivo(false);
         passwordResetTokenRepository.save(token);
 
-        return ResponseEntity.ok("Senha atualizada com sucesso.");
+        return ResponseEntity.ok().build();
     }
 }
 

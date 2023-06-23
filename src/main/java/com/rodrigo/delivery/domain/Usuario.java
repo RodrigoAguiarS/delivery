@@ -3,10 +3,12 @@ package com.rodrigo.delivery.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,8 +18,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Usuario extends Pessoa implements UserDetails {
 
+    @Column(unique = true)
+    @Email(message = "O formato do e-mail é inválido.")
     private String email;
-
     @JsonIgnore
     private String senha;
 

@@ -21,7 +21,6 @@ public class VendaService {
     private final ClienteRepository clienteRepository;
     private final ProdutoRepository produtoRepository;
     private final ItemVendaRepository itemVendaRepository;
-
     private final UsuarioRepository usuarioRepository;
 
 
